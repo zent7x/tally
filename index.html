@@ -158,8 +158,9 @@
   }
   .btn:hover{opacity:.88}
   .btn.sec{background:var(--surface); color:var(--text); border:1px solid var(--border-strong)}
-  .trust{display:flex; gap:18px; justify-content:center; flex-wrap:wrap; margin-top:26px; color:var(--faint); font-size:12.5px}
-  .trust span{display:inline-flex; align-items:center; gap:6px}
+  .trust{display:flex; gap:0 20px; justify-content:center; flex-wrap:wrap; margin-top:26px; color:var(--faint); font-size:12.5px; letter-spacing:.01em}
+  .trust span{position:relative; display:inline-flex; align-items:center}
+  .trust span:not(:last-child)::after{content:""; position:absolute; right:-10px; top:50%; transform:translateY(-50%); width:1px; height:11px; background:var(--border)}
   .insights{display:flex; gap:8px; flex-wrap:wrap; margin:14px 0 2px}
   .insight{display:inline-flex; align-items:center; gap:8px; font-size:12.5px; color:var(--muted); background:var(--surface); border:1px solid var(--border); border-radius:999px; padding:6px 13px; box-shadow:var(--shadow)}
   .insight .idot{width:6px; height:6px; border-radius:50%; background:var(--faint); flex:none}
@@ -421,10 +422,10 @@ function renderEmpty(){
           el("button",{class:"btn sec", onclick:loadDemo},"Try with demo data")
         ),
         el("div",{class:"trust"},
-          el("span",{},"● Offline forever"),
-          el("span",{},"● Zero tracking"),
-          el("span",{},"● AES-256 optional lock"),
-          el("span",{},"● MIT open source")
+          el("span",{},"Offline forever"),
+          el("span",{},"Zero tracking"),
+          el("span",{},"AES-256 optional lock"),
+          el("span",{},"MIT open source")
         )
       )
     )
@@ -434,7 +435,7 @@ function renderEmpty(){
 function heroChart(canvas){
   const ctx = canvas.getContext("2d");
   const reduce = matchMedia("(prefers-reduced-motion:reduce)").matches;
-  let t = 0;
+  let t = 0, f = 0;
   function frame(){
     if(!canvas.isConnected) return;
     const w = canvas.width = Math.max(1, canvas.offsetWidth*2), h = canvas.height = Math.max(1, canvas.offsetHeight*2);
@@ -445,7 +446,7 @@ function heroChart(canvas){
     const g = ctx.createLinearGradient(0,0,0,h); g.addColorStop(0, acc+"4d"); g.addColorStop(1, acc+"00");
     ctx.beginPath(); ctx.moveTo(0,h); pts.forEach(([x,y])=>ctx.lineTo(x,y)); ctx.lineTo(w,h); ctx.closePath(); ctx.fillStyle=g; ctx.fill();
     ctx.beginPath(); pts.forEach(([x,y],i)=> i?ctx.lineTo(x,y):ctx.moveTo(x,y)); ctx.strokeStyle=acc; ctx.lineWidth=3; ctx.globalAlpha=.9; ctx.stroke(); ctx.globalAlpha=1;
-    if(!reduce){ t += 0.016; requestAnimationFrame(frame); }
+    if(!reduce && f++ < 130){ t += 0.016; requestAnimationFrame(frame); }
   }
   requestAnimationFrame(frame);
 }
