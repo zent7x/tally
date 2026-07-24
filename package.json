@@ -1,0 +1,28 @@
+{
+  "name": "tally-finance",
+  "version": "0.1.0",
+  "description": "A private, offline personal finance tracker. No account, no cloud, no tracking. One HTML file.",
+  "type": "commonjs",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "keywords": [
+    "personal-finance",
+    "budgeting",
+    "offline",
+    "privacy",
+    "local-first",
+    "no-cloud",
+    "money",
+    "spending-tracker",
+    "forecast"
+  ],
+  "author": "Adeeb Bashir (zent7x)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zent7x/tally"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}

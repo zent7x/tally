@@ -1,0 +1,6 @@
+node_modules/
+.DS_Store
+*.log
+# never commit anyone's actual financial data
+tally-backup-*.json
+*.local.csv
