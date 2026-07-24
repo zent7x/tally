@@ -4,6 +4,8 @@
 
 When Mint shut down, millions of people were pushed toward apps that make money by watching your spending. Tally is the opposite bet: the most private tool for understanding your money is the one that never sends it anywhere. Everything you see below is computed in your browser and stored only in your browser.
 
+**▸ [Try the live demo](https://zent7x.github.io/tally/)** — click *"Try with demo data"* to explore. Nothing you enter is ever uploaded; the page has no backend to upload it to.
+
 ```
 ┌──────────────────────────────────────────────┐
 │  income  $4,200    spending  $3,010   net +$1,190 │
@@ -29,6 +31,7 @@ When Mint shut down, millions of people were pushed toward apps that make money 
 - **Finds the subscriptions draining you.** It detects charges that repeat on a steady cadence at a steady amount, then shows you the number nobody ever adds up: what they cost *per year*.
 - **Budgets** per category with live progress against the current month.
 - **Forecasts your next 12 months.** This is the part other trackers don't do: it separates fixed recurring costs from discretionary spending, projects your balance forward, and tells you the month you'd run low — *before* it happens. Then you can play with what-ifs privately: trim discretionary spending by X%, model a raise, or "cancel" a subscription and watch the line change.
+- **Encrypts on your device.** Set a passphrase and the whole store is **AES-256-GCM** encrypted at rest, with the key stretched from your passphrase via **PBKDF2 (250k iterations)**. The passphrase stays in memory and is never stored or sent. There's no recovery link — because there's no server to send a recovery link. Lose the passphrase, lose the data (so keep a backup export). The crypto round-trip is covered by the test suite.
 - **Light & dark**, keyboard-friendly, and responsive down to a phone screen.
 
 ## Use it
@@ -72,11 +75,11 @@ The tests run the app's real functions — extracted from `index.html`, not reim
 
 ## Roadmap
 
-- Optional client-side encryption of the local store with a passphrase
-- Import mapping presets per bank (remember your column layout)
-- Multi-account / net-worth view
-- CSV *export* of categorized data
-- Recurring-income smoothing for irregular / gig earners
+- [x] Optional passphrase encryption of the local store (AES-256-GCM) — **shipped in v0.1**
+- [ ] Import mapping presets per bank (remember your column layout)
+- [ ] Multi-account / net-worth view
+- [ ] CSV *export* of categorized data
+- [ ] Recurring-income smoothing for irregular / gig earners
 
 Ideas and PRs welcome — with one rule that will never bend: **Tally does not talk to the network.**
 
