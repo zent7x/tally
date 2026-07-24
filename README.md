@@ -1,5 +1,11 @@
 # Tally
 
+[![CI](https://github.com/zent7x/tally/actions/workflows/test.yml/badge.svg)](https://github.com/zent7x/tally/actions/workflows/test.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![dependencies](https://img.shields.io/badge/dependencies-0-brightgreen.svg)](package.json)
+[![live demo](https://img.shields.io/badge/demo-live-16a34a.svg)](https://zent7x.github.io/tally/)
+[![encryption](https://img.shields.io/badge/at%20rest-AES--256--GCM-7c3aed.svg)](#the-privacy-guarantee-in-code)
+
 **Your money, on your machine.** A personal finance tracker that runs entirely on your device — no account, no bank login, no cloud, no tracking. It's a single HTML file. Double-click it and it works, forever, offline.
 
 When Mint shut down, millions of people were pushed toward apps that make money by watching your spending. Tally is the opposite bet: the most private tool for understanding your money is the one that never sends it anywhere. Everything you see below is computed in your browser and stored only in your browser.
@@ -30,6 +36,8 @@ When Mint shut down, millions of people were pushed toward apps that make money 
 - **Auto-categorizes** transactions with editable keyword rules. Re-categorize once by tapping a chip, and Tally *learns the rule* and applies it to every matching transaction — past and future.
 - **Finds the subscriptions draining you.** It detects charges that repeat on a steady cadence at a steady amount, then shows you the number nobody ever adds up: what they cost *per year*.
 - **Budgets** per category with live progress against the current month.
+- **Plain-language insights.** The overview surfaces auto-generated observations — spending up or down versus last month, the share of income you actually kept, what your subscriptions cost per year, and where the money went — so you get the story, not just the numbers.
+- **Exports to CSV.** One click writes your categorized transactions back out as a clean CSV, so your data is never trapped inside the app.
 - **Forecasts your next 12 months.** This is the part other trackers don't do: it separates fixed recurring costs from discretionary spending, projects your balance forward, and tells you the month you'd run low — *before* it happens. Then you can play with what-ifs privately: trim discretionary spending by X%, model a raise, or "cancel" a subscription and watch the line change.
 - **Encrypts on your device.** Set a passphrase and the whole store is **AES-256-GCM** encrypted at rest, with the key stretched from your passphrase via **PBKDF2 (250k iterations)**. The passphrase stays in memory and is never stored or sent. There's no recovery link — because there's no server to send a recovery link. Lose the passphrase, lose the data (so keep a backup export). The crypto round-trip is covered by the test suite.
 - **Light & dark**, keyboard-friendly, and responsive down to a phone screen.
@@ -76,9 +84,9 @@ The tests run the app's real functions — extracted from `index.html`, not reim
 ## Roadmap
 
 - [x] Optional passphrase encryption of the local store (AES-256-GCM) — **shipped in v0.1**
+- [x] CSV *export* of categorized data — **shipped**
 - [ ] Import mapping presets per bank (remember your column layout)
 - [ ] Multi-account / net-worth view
-- [ ] CSV *export* of categorized data
 - [ ] Recurring-income smoothing for irregular / gig earners
 
 Ideas and PRs welcome — with one rule that will never bend: **Tally does not talk to the network.**
