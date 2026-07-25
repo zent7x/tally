@@ -1,7 +1,9 @@
 name: test
+
 on:
   push:
   pull_request:
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -10,4 +12,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: node test.js
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run build

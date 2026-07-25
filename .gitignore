@@ -1,6 +1,12 @@
 node_modules/
+dist/
 .DS_Store
 *.log
+tsconfig.tsbuildinfo
 # never commit anyone's actual financial data
 tally-backup-*.json
 *.local.csv
+
+# design exploration dumps (not used by the app)
+/assets/
+src/assets/bg/ledger-wave-raw.png

@@ -6,11 +6,11 @@
 [![live demo](https://img.shields.io/badge/demo-live-16a34a.svg)](https://zent7x.github.io/tally/)
 [![encryption](https://img.shields.io/badge/at%20rest-AES--256--GCM-7c3aed.svg)](#the-privacy-guarantee-in-code)
 
-**Your money, on your machine.** A personal finance tracker that runs entirely on your device — no account, no bank login, no cloud, no tracking. It's a single HTML file. Double-click it and it works, forever, offline.
+**Your money, on your machine.** A personal finance tracker that runs entirely on your device — no account, no bank login, no cloud, no tracking. Use it on the [live website](https://zent7x.github.io/tally/), or build the static files and host them anywhere.
 
 When Mint shut down, millions of people were pushed toward apps that make money by watching your spending. Tally is the opposite bet: the most private tool for understanding your money is the one that never sends it anywhere. Everything you see below is computed in your browser and stored only in your browser.
 
-**▸ [Try the live demo](https://zent7x.github.io/tally/)** — click *"Try with demo data"* to explore. Nothing you enter is ever uploaded; the page has no backend to upload it to.
+**▸ [Try the live demo](https://zent7x.github.io/tally/)** — open the site or click *"Try demo data"*. Nothing you enter is ever uploaded; the page has no backend to upload it to.
 
 ```
 ┌──────────────────────────────────────────────┐
@@ -27,8 +27,8 @@ When Mint shut down, millions of people were pushed toward apps that make money 
 ## Why it's different
 
 - **Truly local.** There is no backend. There is no server to hack, no company to sell your data, no terms of service. A test in this repo (`no fetch() calls`, `no external resource links`) *fails the build* if anyone ever adds a network call. Privacy isn't a promise here — it's enforced by CI.
-- **Zero install.** No npm, no Docker, no sign-up. One `index.html`. Works on a laptop, a phone, a locked-down work machine, a Raspberry Pi, or a USB stick.
-- **You own the file.** Your data is a JSON backup you export whenever you want. Move it, encrypt it, delete it. It's yours.
+- **Zero install.** Open the website, or host the built static files yourself. Works on a laptop, a phone, a locked-down work machine, or a USB stick.
+- **You own the data.** Export a JSON backup whenever you want. Move it, encrypt it, delete it. It's yours.
 
 ## What it does
 
@@ -44,11 +44,39 @@ When Mint shut down, millions of people were pushed toward apps that make money 
 
 ## Use it
 
-1. Download [`index.html`](index.html).
-2. Open it in any browser.
-3. Click **Try with demo data** to explore, or **Import bank CSV** to use your own. A ready-made [`sample-statement.csv`](sample-statement.csv) is included so you can see a real import.
+### On the website
 
-That's the whole setup. Nothing else to run.
+1. Open **[zent7x.github.io/tally](https://zent7x.github.io/tally/)**.
+2. Click **Open app**, or use **Import / Add / Demo** on the landing dock.
+3. Everything stays in your browser — refresh and your local ledger is still there.
+
+### Host it yourself (upload anywhere)
+
+```bash
+npm install
+npm run build
+```
+
+Upload the entire `dist/` folder to any static host (GitHub Pages, Netlify, Cloudflare Pages, S3, nginx, a USB stick web server). Paths are relative, so it works from a subdomain or a subfolder.
+
+Local preview of the production build:
+
+```bash
+npm run preview
+```
+
+## Develop
+
+```bash
+npm install
+npm run dev      # http://localhost:5173
+npm test         # privacy + finance core (test.cjs)
+npm run build    # static site → dist/
+```
+
+The tests import the same finance core used by the offline app (`lib/finance-core.mjs`, mirrored from `src/lib/finance/`) — not reimplemented — so they can't drift from the shipped code.
+
+Pushes to `main` build and deploy the website via GitHub Pages (`.github/workflows/pages.yml`).
 
 ## The privacy guarantee, in code
 
@@ -60,7 +88,7 @@ ok("no external resource links", !/(src|href)\s*=\s*["']https?:/i.test(html));
 ok("no XMLHttpRequest",          !/XMLHttpRequest/.test(script));
 ```
 
-If a future change (or a well-meaning "just add analytics" PR) tries to phone home, `node test.js` goes red. You never have to *trust* that Tally is private — you can read the ~20 lines that prove it.
+If a future change (or a well-meaning "just add analytics" PR) tries to phone home, `npm test` goes red. You never have to *trust* that Tally is private — you can read the ~20 lines that prove it.
 
 ## How the forecast works
 
@@ -70,16 +98,6 @@ Tally looks at your history and splits spending into two buckets:
 - **Discretionary** — everything else, averaged per month.
 
 Starting from your current balance (set it under **Data → Set balance** for accuracy), it projects `balance + income − fixed − discretionary` forward month by month, flags the first month you'd go negative, and lets the what-if levers recompute the line instantly. It's a projection, not a promise: it assumes your recent patterns continue. But seeing "you run low in March" in September is the whole point.
-
-## Develop
-
-No build step. Edit `index.html` and refresh. The logic engine (CSV/date/amount parsing, categorization, recurring detection) is unit-tested headlessly:
-
-```bash
-node test.js      # or: npm test
-```
-
-The tests run the app's real functions — extracted from `index.html`, not reimplemented — so they can't drift from the shipped code.
 
 ## Roadmap
 
