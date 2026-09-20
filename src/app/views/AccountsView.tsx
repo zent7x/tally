@@ -103,8 +103,8 @@ export function AccountsView() {
     <div className="space-y-6">
       <div className="section-heading flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-semibold tracking-tight">Your money, together.</h2>
-          <p className="muted mt-1 text-sm">A clear view of what you own, what you owe, and what is available.</p>
+          <h2 className="text-2xl font-semibold tracking-tight">Balances</h2>
+          <p className="muted mt-1 text-sm">Manage accounts and current balance snapshots.</p>
         </div>
         <button type="button" className="btn" onClick={() => openEditor()}><Plus size={16} aria-hidden="true" /> Add account</button>
       </div>
@@ -116,7 +116,7 @@ export function AccountsView() {
           { title: "Debts", value: summary.liabilities, detail: "Amount owed, including overdrafts", icon: ArrowDownLeft },
           { title: "Cash available", value: summary.cashBalance, detail: "Checking, savings, and cash", icon: Wallet },
         ].map(({ title, value, detail, icon: Icon }) => (
-          <section className="metric-card glass-panel min-w-0 p-5" key={title} aria-label={title}>
+          <section className="metric-card panel min-w-0 p-5" key={title} aria-label={title}>
             <div className="flex items-center justify-between gap-2"><h3 className="muted text-sm">{title}</h3><Icon size={17} aria-hidden="true" /></div>
             <p className="my-3 break-words text-3xl font-semibold tracking-tight tabular-nums">{money(value)}</p>
             <p className="muted text-xs">{detail}</p>
@@ -124,7 +124,7 @@ export function AccountsView() {
         ))}
       </div>
 
-      <section className="glass-panel p-5 sm:p-6" aria-labelledby="account-list-title">
+      <section className="panel p-5 sm:p-6" aria-labelledby="account-list-title">
         <div className="section-heading mb-5 flex flex-wrap items-start justify-between gap-3">
           <div><h3 id="account-list-title" className="text-lg font-semibold">Accounts</h3><p className="muted mt-1 text-sm">{state.accounts.length} {state.accounts.length === 1 ? "account" : "accounts"} · stored only on this device</p></div>
           <span className="muted text-xs">All balances in {state.settings.currency}</span>

@@ -61,7 +61,7 @@ export function CategoriesView() {
 
   return (
     <div className="space-y-6">
-      <div className="glass-panel p-5">
+      <div className="panel p-5">
         <p className="text-sm font-medium" style={{ color: "var(--muted)" }}>
           All-time spend
         </p>
@@ -73,7 +73,7 @@ export function CategoriesView() {
         </p>
       </div>
 
-      <section className="glass-panel p-5 sm:p-6">
+      <section className="panel p-5 sm:p-6">
         <h2 className="text-sm font-medium" style={{ color: "var(--muted)" }}>
           Spend by category
         </h2>

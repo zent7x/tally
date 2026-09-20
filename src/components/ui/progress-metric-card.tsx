@@ -12,7 +12,6 @@ import { useId, useMemo, useState } from "react";
 import {
   MetricChart,
   formatCompact,
-  ACCENTS,
   type ChartView,
   type MetricAccent,
   type SeriesPoint,
@@ -52,21 +51,6 @@ function sliceByPeriod(data: SeriesPoint[], points?: number) {
   return data.slice(-points);
 }
 
-function computeDelta(data: SeriesPoint[], index: number) {
-  if (index <= 0 || !data[index] || !data[index - 1]) {
-    return null;
-  }
-
-  const current = data[index].value;
-  const previous = data[index - 1].value;
-
-  if (previous === 0) {
-    return null;
-  }
-
-  return ((current - previous) / Math.abs(previous)) * 100;
-}
-
 export function ProgressMetricCard({
   title,
   unit,
@@ -101,12 +85,10 @@ export function ProgressMetricCard({
 
   const displayIndex = activeIndex ?? resolvedDefaultIndex;
   const activePoint = visibleData[displayIndex];
-  const delta = computeDelta(visibleData, displayIndex);
-  const accentColors = ACCENTS[accent];
 
   return (
     <section
-      className={cn("glass-panel w-full p-5 sm:p-6", className)}
+      className={cn("panel w-full p-5 sm:p-6", className)}
       aria-labelledby={titleId}
     >
       <div className="mb-5 flex flex-wrap items-start justify-between gap-3">
@@ -133,17 +115,7 @@ export function ProgressMetricCard({
           {activePoint ? (
             <p className="mt-1 text-xs" style={{ color: "var(--muted, #5b646c)" }}>
               {dateFormatter(activePoint.date)}
-              {delta !== null ? (
-                <span
-                  className="ml-2 font-medium tabular-nums"
-                  style={{
-                    color: delta >= 0 ? accentColors.text : ACCENTS.rose.text,
-                  }}
-                >
-                  {delta >= 0 ? "+" : ""}
-                  {delta.toFixed(1)}%
-                </span>
-              ) : null}
+
             </p>
           ) : null}
         </div>
@@ -171,7 +143,7 @@ export function ProgressMetricCard({
         onActiveIndexChange={setActiveIndex}
         valueFormatter={valueFormatter}
         dateFormatter={dateFormatter}
-        height={200}
+        height={160}
       />
     </section>
   );

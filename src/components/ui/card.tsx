@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 function Card({ className, ...props }: ComponentProps<"div">) {
   return (
     <div
-      className={cn("glass-panel text-card-foreground", className)}
+      className={cn("panel text-card-foreground", className)}
       {...props}
     />
   );

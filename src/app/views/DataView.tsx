@@ -180,7 +180,7 @@ export function DataView() {
       {error && !preview && !restoreEnvelope && !confirmation && <p className="notice error text-sm" role="alert">{error}</p>}
       {storageError && <p className="notice error text-sm" role="alert">{storageError}</p>}
 
-      <section className="glass-panel space-y-5 p-5 sm:p-6" aria-labelledby="backup-title">
+      <section className="panel space-y-5 p-5 sm:p-6" aria-labelledby="backup-title">
         <div className="section-heading"><h3 id="backup-title" className="text-lg font-semibold">Back up & restore</h3><p className="muted mt-1 text-sm">Browser data can be cleared. A JSON backup keeps your complete ledger, accounts, budgets, import presets, and settings together.</p></div>
         <div className="metric-grid grid grid-cols-2 gap-4 sm:grid-cols-4">
           {[["Transactions", state.transactions.length], ["Accounts", state.accounts.length], ["Budgets", Object.keys(state.budgets).length], ["Import presets", state.importPresets.length]].map(([label, count]) => <div key={label} className="min-w-0"><p className="muted text-xs">{label}</p><p className="mt-1 text-2xl font-semibold tabular-nums">{count}</p></div>)}
@@ -200,7 +200,7 @@ export function DataView() {
         </div>
       </section>
 
-      <section className="glass-panel space-y-5 p-5 sm:p-6" aria-labelledby="protection-title">
+      <section className="panel space-y-5 p-5 sm:p-6" aria-labelledby="protection-title">
         <div className="section-heading flex items-start gap-3"><ShieldCheck size={22} className="mt-1 shrink-0" aria-hidden="true" /><div><h3 id="protection-title" className="text-lg font-semibold">Local passphrase protection</h3><p className="muted mt-1 text-sm">{encrypted ? "Your saved ledger is encrypted with AES-256-GCM." : "Your ledger is stored unencrypted in this browser. Add a passphrase to protect it at rest."}</p></div></div>
         {encrypted ? <div className="space-y-3">
           <div className="form-actions flex flex-wrap gap-3">
@@ -218,7 +218,7 @@ export function DataView() {
         </form>}
       </section>
 
-      <section className="glass-panel space-y-4 p-5 sm:p-6" aria-labelledby="currency-title">
+      <section className="panel space-y-4 p-5 sm:p-6" aria-labelledby="currency-title">
         <div className="section-heading"><h3 id="currency-title" className="text-lg font-semibold">Display currency</h3><p className="muted mt-1 text-sm">Use one currency across all accounts. Changing this setting changes formatting only; it does not convert balances or transaction amounts.</p></div>
         <label className="ledger-field max-w-sm">Currency<select className="ledger-input" value={state.settings.currency} disabled={disabled} onChange={(event) => {
           const currency = event.target.value;
@@ -229,7 +229,7 @@ export function DataView() {
         </select></label>
       </section>
 
-      <section className="glass-panel space-y-4 p-5 sm:p-6" aria-labelledby="reset-title">
+      <section className="panel space-y-4 p-5 sm:p-6" aria-labelledby="reset-title">
         <div className="section-heading"><h3 id="reset-title" className="text-lg font-semibold">Start fresh</h3><p className="muted mt-1 text-sm">These actions replace your current data. Download a JSON backup first if you want to keep it. Your current encryption protection stays in place.</p></div>
         <div className="form-actions flex flex-wrap gap-3">
           <button type="button" className="btn sec" disabled={disabled} onClick={() => { setError(""); setConfirmation("demo"); }}>Load demo data</button>

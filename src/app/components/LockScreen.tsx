@@ -35,7 +35,7 @@ export function LockScreen({ envelope, onUnlock, onErase }: LockScreenProps) {
 
   return (
     <div className="flex min-h-[100dvh] items-center justify-center p-5">
-      <div className="glass-panel w-full max-w-sm p-8 text-center">
+      <div className="panel w-full max-w-sm p-8 text-center">
         <div className="mb-2 flex items-center justify-center gap-2 text-lg font-semibold">
           <img src={logoUrl} alt="" width={26} height={26} className="rounded-md" />
           Tally

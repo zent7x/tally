@@ -155,7 +155,7 @@ export function ImportDialog({ onClose, onImported }: {
   return <Modal title="Import transactions" onClose={onClose} wide>
     <div className="space-y-5 import-dialog">
       <p className="muted">Bring a CSV from your bank. Your file stays on this device.</p>
-      <div className={`glass-panel import-dropzone${dragging ? " is-dragging" : ""}`}
+      <div className={`panel import-dropzone${dragging ? " is-dragging" : ""}`}
         onDragOver={(event) => { event.preventDefault(); setDragging(true); }}
         onDragLeave={(event) => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setDragging(false); }}
         onDrop={(event) => {
@@ -226,7 +226,7 @@ export function ImportDialog({ onClose, onImported }: {
           </div>
           <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={mapping.invertAmounts} onChange={(event) => updateMapping("invertAmounts", event.target.checked)} />Reverse amount signs</label>
           <p className="muted">Expenses should be negative and income positive. {amountMode === "separate" && "Choose at least one debit or credit column. "}Only presets matching this file’s complete column layout are shown.</p>
-          <div className="glass-panel space-y-3 p-4">
+          <div className="panel space-y-3 p-4">
             <label className="ledger-field"><span>Remember this bank layout</span><input className="ledger-input" value={presetName} maxLength={80} placeholder="e.g. Everyday checking" onChange={(event) => setPresetName(event.target.value)} /></label>
             <div className="form-actions">
               <button type="button" className="btn sec" disabled={needsPresetChoice || !mappingValid || !presetName.trim()} onClick={() => savePreset(false)}>Save new preset</button>
@@ -238,7 +238,7 @@ export function ImportDialog({ onClose, onImported }: {
         <section className="space-y-3" aria-labelledby="import-preview-heading">
           <div className="section-heading"><h3 id="import-preview-heading">Preview</h3><span className="muted" aria-live="polite">{preview?.transactions.length ?? 0} ready · {preview?.skipped ?? 0} skipped</span></div>
           {!!preview?.errors.length && <div className="notice notice-error" role="status"><p>{mappingValid ? "Review skipped rows before importing. Only valid rows will be added." : "Complete the column mapping to continue."}</p><ul className="list-disc pl-5">{preview.errors.map((message, index) => <li key={index}>{message}</li>)}</ul></div>}
-          {!!preview?.transactions.length && <div className="glass-panel overflow-x-auto"><table className="w-full text-sm">
+          {!!preview?.transactions.length && <div className="panel overflow-x-auto"><table className="w-full text-sm">
             <caption className="sr-only">First {Math.min(preview.transactions.length, 5)} valid transactions</caption>
             <thead><tr><th scope="col" className="p-3 text-left">Date</th><th scope="col" className="p-3 text-left">Description</th><th scope="col" className="p-3 text-left">Category</th><th scope="col" className="p-3 text-right">Amount</th></tr></thead>
             <tbody>{preview.transactions.slice(0, 5).map((transaction, index) => <tr key={index}><td className="p-3 whitespace-nowrap">{transaction.date}</td><td className="p-3">{transaction.desc}</td><td className="p-3">{transaction.category}</td><td className="p-3 text-right whitespace-nowrap tabular-nums">{new Intl.NumberFormat(undefined, { style: "currency", currency: state.settings.currency }).format(transaction.amount)}</td></tr>)}</tbody>

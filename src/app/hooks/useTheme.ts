@@ -25,7 +25,7 @@ export function useTheme() {
     document.documentElement.setAttribute("data-theme", theme);
     document.documentElement.classList.toggle("dark", theme === "dark");
     const meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute("content", theme === "dark" ? "#101b18" : "#f5f4ee");
+    if (meta) meta.setAttribute("content", theme === "dark" ? "#171b18" : "#f6f7f5");
   }, [theme]);
   const toggleTheme = () => {
     fallbackTheme = readTheme() === "dark" ? "light" : "dark";
