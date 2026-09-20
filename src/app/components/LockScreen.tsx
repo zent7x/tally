@@ -7,7 +7,7 @@ import logoUrl from "@/assets/logo/tally-icon.svg";
 
 export interface LockScreenProps {
   envelope: EncryptedEnvelope;
-  onUnlock: (state: FinanceState) => void;
+  onUnlock: (state: FinanceState, key: CryptoKey, salt: BufferSource) => void;
   onErase: () => void;
 }
 
@@ -24,7 +24,7 @@ export function LockScreen({ envelope, onUnlock, onErase }: LockScreenProps) {
       const salt = envelopeSalt(envelope);
       const key = await deriveKey(passphrase, salt as BufferSource);
       const raw = await decryptWith<FinanceState>(key, envelope);
-      onUnlock(migrate(raw));
+      onUnlock(migrate(raw), key, salt as BufferSource);
       setPassphrase("");
     } catch {
       setError("Wrong passphrase — try again.");

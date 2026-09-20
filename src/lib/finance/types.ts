@@ -6,6 +6,38 @@ export interface Transaction {
   desc: string;
   amount: number;
   category: string;
+  accountId?: string;
+}
+
+export interface Account {
+  id: string;
+  name: string;
+  type: "checking" | "savings" | "cash" | "investment" | "credit" | "loan";
+  balance: number | null;
+}
+
+export interface ImportMapping {
+  date: number;
+  description: number;
+  amount: number;
+  debit: number;
+  credit: number;
+  dateFormat: "auto" | "mdy" | "dmy" | "ymd";
+  invertAmounts: boolean;
+}
+
+export interface ImportPreset {
+  id: string;
+  name: string;
+  headers: string[];
+  mapping: ImportMapping;
+}
+
+export interface IncomePlan {
+  mode: "average" | "conservative" | "manual";
+  windowMonths: 3 | 6 | 12;
+  monthlyTarget: number;
+  reserveBalance: number;
 }
 
 export type Rule = [string, string];
@@ -16,6 +48,7 @@ export interface FinanceSettings {
   currency: string;
   startingBalance: number | null;
   theme: Theme;
+  incomePlan: IncomePlan;
 }
 
 export interface FinanceState {
@@ -23,6 +56,8 @@ export interface FinanceState {
   rules: Rule[];
   budgets: Record<string, number>;
   settings: FinanceSettings;
+  accounts: Account[];
+  importPresets: ImportPreset[];
 }
 
 /** Alias used by legacy finance modules */
@@ -38,6 +73,7 @@ export interface EncryptedEnvelope {
 
 export interface RecurringItem {
   key: string;
+  accountId?: string;
   name: string;
   category: string;
   cadence: "weekly" | "biweekly" | "monthly" | "quarterly" | "yearly";
@@ -59,12 +95,15 @@ export type AppTab =
   | "categories"
   | "subscriptions"
   | "budgets"
-  | "forecast";
+  | "forecast"
+  | "accounts"
+  | "income"
+  | "data";
 
 export type DeepLinkAction = "demo" | "import" | "add";
 
 export const STORAGE_KEY = "tally.v1";
 
 export function uid(): string {
-  return Math.random().toString(36).slice(2, 10);
+  return crypto.randomUUID();
 }

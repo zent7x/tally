@@ -25,6 +25,7 @@ export function generateDemoTransactions(
       if (day <= maxDay) {
         records.push({
           id: uid(),
+          accountId: "default",
           date: D(day),
           desc,
           amount,
@@ -76,6 +77,8 @@ export function generateDemoTransactions(
       push("CVS Pharmacy", -Math.round(rnd(10, 60)), Math.floor(rnd(2, 28)));
     }
     if (mo === 2) push("Freelance project", 850, 15);
+    if (mo === 4) push("Freelance design", 1600, 16);
+    if (mo === 1) push("Freelance project", 620, 15);
   }
   return records;
 }
@@ -88,9 +91,16 @@ export function applyDemo(state: AppState): AppState {
   return {
     ...state,
     transactions: records,
+    accounts: [
+      { id: "default", name: "Everyday checking", type: "checking", balance: Math.round((3200 + netSum) * 100) / 100 },
+      { id: "demo-savings", name: "Rainy day fund", type: "savings", balance: 6400 },
+      { id: "demo-investment", name: "Long-term investments", type: "investment", balance: 12800 },
+      { id: "demo-credit", name: "Credit card", type: "credit", balance: -1240 },
+    ],
     settings: {
       ...state.settings,
-      startingBalance: Math.round((3200 + netSum) * 100) / 100,
+      startingBalance: null,
+      incomePlan: { mode: "average", windowMonths: 6, monthlyTarget: 3500, reserveBalance: 6400 },
     },
   };
 }

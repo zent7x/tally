@@ -20,7 +20,7 @@ export function BudgetsView() {
   const isDark = theme === "dark";
   const { transactions, budgets, settings } = state;
 
-  const monthKey = useMemo(() => ym(new Date().toISOString().slice(0, 10)), []);
+  const monthKey = useMemo(() => { const now = new Date(); return ym(`${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-01`); }, []);
 
   const rows = useMemo(
     () =>
@@ -43,20 +43,14 @@ export function BudgetsView() {
   }, [monthKey]);
 
   const setBudget = (name: string, value: string) => {
-    const parsed = value === "" ? 0 : Math.max(0, Number.parseFloat(value) || 0);
+    const parsed = value === "" ? 0 : Number(value);
+    if (!Number.isFinite(parsed) || parsed < 0) return;
     setState((prev) => ({
       ...prev,
       budgets: { ...prev.budgets, [name]: parsed },
     }));
   };
 
-  if (!transactions.length) {
-    return (
-      <p className="text-sm" style={{ color: "var(--muted)" }}>
-        Add transactions to track budgets.
-      </p>
-    );
-  }
 
   return (
     <div className="space-y-6">

@@ -8,7 +8,7 @@ import {
   ChartContainer,
   ChartTooltip,
 } from "@/components/ui/line-charts-6";
-import { formatAxisDate, formatAxisMoney } from "@/lib/finance/metrics";
+import { formatAxisDate, formatAxisMoney, metricPercentageChange } from "@/lib/finance/metrics";
 import { cn } from "@/lib/utils";
 
 export type FinanceMetricKey = "spend" | "income" | "net" | "transactions";
@@ -30,60 +30,7 @@ export interface FinanceMetricSummary {
   isNegative?: boolean;
 }
 
-const TALLY_GREEN = "#146B4A";
-
-export const demoFinanceData: FinanceDataPoint[] = [
-  { date: "2024-04-01", spend: 142, income: 320, net: 178, transactions: 18 },
-  { date: "2024-04-02", spend: 89, income: 0, net: -89, transactions: 11 },
-  { date: "2024-04-03", spend: 118, income: 180, net: 62, transactions: 14 },
-  { date: "2024-04-04", spend: 164, income: 0, net: -164, transactions: 21 },
-  { date: "2024-04-05", spend: 201, income: 420, net: 219, transactions: 24 },
-  { date: "2024-04-06", spend: 54, income: 0, net: -54, transactions: 7 },
-  { date: "2024-04-07", spend: 176, income: 260, net: 84, transactions: 19 },
-  { date: "2024-04-08", spend: 228, income: 0, net: -228, transactions: 26 },
-  { date: "2024-04-09", spend: 72, income: 140, net: 68, transactions: 9 },
-  { date: "2024-04-10", spend: 133, income: 0, net: -133, transactions: 16 },
-  { date: "2024-04-11", spend: 149, income: 310, net: 161, transactions: 17 },
-  { date: "2024-04-12", spend: 267, income: 0, net: -267, transactions: 29 },
-  { date: "2024-04-13", spend: 155, income: 190, net: 35, transactions: 15 },
-  { date: "2024-04-14", spend: 61, income: 0, net: -61, transactions: 8 },
-  { date: "2024-04-15", spend: 98, income: 220, net: 122, transactions: 12 },
-  { date: "2024-04-16", spend: 127, income: 0, net: -127, transactions: 14 },
-  { date: "2024-04-17", spend: 312, income: 540, net: 228, transactions: 34 },
-  { date: "2024-04-18", spend: 241, income: 0, net: -241, transactions: 27 },
-];
-
-const defaultMetrics: FinanceMetricSummary[] = [
-  {
-    key: "spend",
-    label: "Spend",
-    value: 2787,
-    previousValue: 2510,
-    format: (val) => `$${val.toLocaleString()}`,
-  },
-  {
-    key: "income",
-    label: "Income",
-    value: 2590,
-    previousValue: 2280,
-    format: (val) => `$${val.toLocaleString()}`,
-  },
-  {
-    key: "net",
-    label: "Net",
-    value: -197,
-    previousValue: -230,
-    format: (val) => `${val >= 0 ? "+" : "-"}$${Math.abs(val).toLocaleString()}`,
-    isNegative: true,
-  },
-  {
-    key: "transactions",
-    label: "Transactions",
-    value: 311,
-    previousValue: 284,
-    format: (val) => val.toLocaleString(),
-  },
-];
+const TALLY_GREEN = "var(--chart-emerald)";
 
 const chartConfig = {
   spend: {
@@ -92,20 +39,21 @@ const chartConfig = {
   },
   income: {
     label: "Income",
-    color: "#2563eb",
+    color: "var(--chart-blue)",
   },
   net: {
     label: "Net",
-    color: "#7c3aed",
+    color: "var(--chart-violet)",
   },
   transactions: {
     label: "Transactions",
-    color: "#ca8a04",
+    color: "var(--chart-amber)",
   },
 } satisfies ChartConfig;
 
 interface TooltipProps {
   active?: boolean;
+  label?: string | number;
   payload?: Array<{
     dataKey: string;
     value: number;
@@ -117,6 +65,7 @@ function FinanceTooltip({
   active,
   payload,
   metrics,
+  label,
 }: TooltipProps & { metrics: FinanceMetricSummary[] }) {
   if (active && payload && payload.length) {
     const entry = payload[0];
@@ -125,6 +74,7 @@ function FinanceTooltip({
     if (metric) {
       return (
         <div className="min-w-[120px] rounded-lg border bg-popover p-3 shadow-sm shadow-black/5">
+          {label != null && <p className="mb-1 text-xs text-muted-foreground">{formatAxisDate(String(label))}</p>}
           <div className="flex items-center gap-2 text-sm">
             <div
               className="size-1.5 rounded-full"
@@ -145,16 +95,18 @@ function FinanceTooltip({
 
 export interface FinanceMetricsChartProps {
   className?: string;
-  data?: FinanceDataPoint[];
+  data: FinanceDataPoint[];
   defaultMetric?: FinanceMetricKey;
-  metrics?: FinanceMetricSummary[];
+  metrics: FinanceMetricSummary[];
+  currency?: string;
 }
 
 export function FinanceMetricsChart({
   className,
-  data = demoFinanceData,
+  data,
   defaultMetric = "spend",
-  metrics = defaultMetrics,
+  metrics,
+  currency = "USD",
 }: FinanceMetricsChartProps) {
   const [selectedMetric, setSelectedMetric] = useState<FinanceMetricKey>(defaultMetric);
 
@@ -163,15 +115,16 @@ export function FinanceMetricsChart({
       <CardHeader className="mb-5 p-0">
         <div className="grid grow @2xl:grid-cols-2 @3xl:grid-cols-4">
           {metrics.map((metric) => {
-            const change =
-              ((metric.value - metric.previousValue) / metric.previousValue) * 100;
-            const isPositive = metric.isNegative ? change < 0 : change > 0;
+            const change = metricPercentageChange(metric.value, metric.previousValue);
+            const isPositive = change !== null && (metric.isNegative ? change < 0 : change > 0);
+            const isNeutral = change === null || change === 0 || metric.key === "transactions";
 
             return (
               <button
                 key={metric.key}
                 type="button"
                 onClick={() => setSelectedMetric(metric.key)}
+                aria-pressed={selectedMetric === metric.key}
                 className={cn(
                   "flex-1 cursor-pointer border-b p-4 text-start transition-all last:border-b-0 @2xl:border-b @2xl:even:border-e @3xl:border-b-0 @3xl:border-e @3xl:last:border-e-0",
                   selectedMetric === metric.key && "bg-muted/50",
@@ -180,16 +133,16 @@ export function FinanceMetricsChart({
                 <div className="mb-2 flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">{metric.label}</span>
                   <Badge
-                    variant={isPositive ? "success" : "destructive"}
+                    variant={isNeutral ? "outline" : isPositive ? "success" : "destructive"}
                     appearance="outline"
                   >
-                    {isPositive ? <ArrowUp className="size-3" /> : <ArrowDown className="size-3" />}
-                    {Math.abs(change).toFixed(1)}%
+                    {change !== null && change !== 0 && (change > 0 ? <ArrowUp className="size-3" /> : <ArrowDown className="size-3" />)}
+                    {change === null ? "—" : `${Math.abs(change).toFixed(1)}%`}
                   </Badge>
                 </div>
                 <div className="text-2xl font-bold">{metric.format(metric.value)}</div>
                 <div className="mt-1 text-xs text-muted-foreground">
-                  from {metric.format(metric.previousValue)}
+                  {metric.previousValue === 0 && metric.key !== "net" ? "No prior activity" : `Previous 30 days: ${metric.format(metric.previousValue)}`}
                 </div>
               </button>
             );
@@ -227,12 +180,12 @@ export function FinanceMetricsChart({
               tickLine={false}
               tick={{ fontSize: 11, fill: "var(--muted)" }}
               tickMargin={8}
-              width={44}
+              width={64}
               tickCount={5}
               tickFormatter={(value) =>
                 selectedMetric === "transactions"
                   ? String(Math.round(Number(value)))
-                  : formatAxisMoney(Number(value))
+                  : formatAxisMoney(Number(value), currency)
               }
             />
 

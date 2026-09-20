@@ -1,33 +1,36 @@
-import { useEffect, useState } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import type { Theme } from "@/lib/finance/types";
 import { STORAGE_KEY } from "@/lib/finance/types";
 
+let fallbackTheme: Theme = "light";
+const THEME_EVENT = "tally-theme-change";
 function readTheme(): Theme {
   try {
     const stored = localStorage.getItem(`${STORAGE_KEY}.theme`);
     if (stored === "dark" || stored === "light") return stored;
-  } catch {
-    /* ignore */
-  }
-  return "light";
+  } catch { /* Keep theme changes usable when storage is unavailable. */ }
+  return fallbackTheme;
 }
-
+function subscribe(callback: () => void) {
+  window.addEventListener(THEME_EVENT, callback);
+  window.addEventListener("storage", callback);
+  return () => {
+    window.removeEventListener(THEME_EVENT, callback);
+    window.removeEventListener("storage", callback);
+  };
+}
 export function useTheme() {
-  const [theme, setTheme] = useState<Theme>(() => readTheme());
-
+  const theme = useSyncExternalStore(subscribe, readTheme, () => "light" as Theme);
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
     document.documentElement.classList.toggle("dark", theme === "dark");
-    try {
-      localStorage.setItem(`${STORAGE_KEY}.theme`, theme);
-    } catch {
-      /* ignore */
-    }
     const meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute("content", theme === "dark" ? "#0d0f11" : "#f7f7f3");
+    if (meta) meta.setAttribute("content", theme === "dark" ? "#101b18" : "#f5f4ee");
   }, [theme]);
-
-  const toggleTheme = () => setTheme((t) => (t === "dark" ? "light" : "dark"));
-
+  const toggleTheme = () => {
+    fallbackTheme = readTheme() === "dark" ? "light" : "dark";
+    try { localStorage.setItem(`${STORAGE_KEY}.theme`, fallbackTheme); } catch { /* use memory */ }
+    window.dispatchEvent(new Event(THEME_EVENT));
+  };
   return { theme, toggleTheme };
 }

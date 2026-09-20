@@ -8,7 +8,7 @@
  */
 
 import { cn } from "@/lib/utils";
-import { useMemo, useState } from "react";
+import { useId, useMemo, useState } from "react";
 import {
   MetricChart,
   formatCompact,
@@ -79,6 +79,7 @@ export function ProgressMetricCard({
   valueFormatter = formatCompact,
   dateFormatter = (date) => date,
 }: ProgressMetricCardProps) {
+  const titleId = useId();
   const [periodLabel, setPeriodLabel] = useState(defaultPeriod);
   const [view, setView] = useState<ChartView>("curve");
   const [activeIndex, setActiveIndex] = useState<number | undefined>(undefined);
@@ -106,12 +107,13 @@ export function ProgressMetricCard({
   return (
     <section
       className={cn("glass-panel w-full p-5 sm:p-6", className)}
+      aria-labelledby={titleId}
     >
       <div className="mb-5 flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-sm font-medium" style={{ color: "var(--muted, #5b646c)" }}>
+          <h3 id={titleId} className="text-sm font-medium" style={{ color: "var(--muted, #5b646c)" }}>
             {title}
-          </p>
+          </h3>
           <div className="mt-1 flex flex-wrap items-end gap-x-2 gap-y-1">
             <p
               className="text-3xl font-semibold tabular-nums tracking-tight sm:text-4xl"
@@ -146,7 +148,7 @@ export function ProgressMetricCard({
           ) : null}
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2" role="group" aria-label={`${title} chart controls`}>
           <PeriodSelect
             options={periods}
             value={periodLabel}
@@ -161,6 +163,7 @@ export function ProgressMetricCard({
 
       <MetricChart
         data={visibleData}
+        label={title}
         view={view}
         accent={accent}
         defaultIndex={resolvedDefaultIndex}
