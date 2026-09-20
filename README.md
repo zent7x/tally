@@ -112,3 +112,7 @@ Ideas and PRs welcome — with one rule that will never bend: **Tally does not t
 ## License
 
 MIT © 2026 Adeeb Bashir ([zent7x](https://github.com/zent7x))
+
+---
+
+Built by Adeeb Bashir (zentex) · [zent7x.com](https://zent7x.com)
