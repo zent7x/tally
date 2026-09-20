@@ -63,3 +63,22 @@ test("the loaded ledger stays usable without a network connection", async ({ pag
   await page.getByRole("navigation", { name: "App sections" }).getByRole("button", { name: "Forecast", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Forecast", exact: true })).toBeVisible();
 });
+
+test("demo replacement asks before discarding configuration without transactions", async ({ page }) => {
+  await page.goto("/app.html");
+  const nav = page.getByRole("navigation", { name: "App sections" });
+  await nav.getByRole("button", { name: "Budgets", exact: true }).click();
+  await page.getByRole("spinbutton", { name: /Budget limit for Groceries/ }).fill("123");
+  await expect(page.getByText("All changes saved locally", { exact: true })).toBeVisible();
+  let confirmations = 0;
+  page.on("dialog", async (dialog) => { confirmations++; await dialog.dismiss(); });
+  await nav.getByRole("button", { name: "Overview", exact: true }).click();
+  await page.getByRole("button", { name: /demo data/ }).click();
+  expect(confirmations).toBe(1);
+  await page.goto("/app.html?action=demo");
+  await expect(page.getByRole("heading", { name: "Overview", exact: true })).toBeVisible();
+  expect(confirmations).toBe(2);
+  const saved = await page.evaluate(() => JSON.parse(localStorage.getItem("tally.v1")!));
+  expect(saved.budgets.Groceries).toBe(123);
+  expect(saved.transactions).toHaveLength(0);
+});

@@ -18,6 +18,7 @@ import { AccountsView } from "@/app/views/AccountsView";
 import { IncomeView } from "@/app/views/IncomeView";
 import { DataView } from "@/app/views/DataView";
 import type { AppTab, DeepLinkAction } from "@/lib/finance/types";
+import { defaultState } from "@/lib/finance/storage";
 
 const TABS: { id: AppTab; label: string; description: string }[] = [
   { id: "overview", label: "Overview", description: "A little clarity for your everyday money." },
@@ -53,11 +54,16 @@ function FinanceAppInner() {
   const hasLedger = hasTransactions || state.accounts.length > 1 || state.accounts.some((account) => account.balance !== null);
 
   const handleDemo = useCallback(() => {
-    if (hasLedger && !window.confirm("Replace your ledger, accounts, budgets, and import presets with demo data? Export a backup first if you want to keep them.")) return;
+    const defaults = defaultState();
+    const hasConfiguration = state.importPresets.length > 0 || Object.keys(state.budgets).length > 0
+      || JSON.stringify(state.accounts) !== JSON.stringify(defaults.accounts)
+      || JSON.stringify(state.rules) !== JSON.stringify(defaults.rules)
+      || JSON.stringify(state.settings.incomePlan) !== JSON.stringify(defaults.settings.incomePlan);
+    if ((hasLedger || hasConfiguration) && !window.confirm("Replace your ledger, accounts, budgets, category rules, income plan, and import presets with demo data? Export a backup first if you want to keep them.")) return;
     loadDemo();
     setTab("overview");
     setNotice("Demo ledger loaded. Explore freely — everything stays on this device.");
-  }, [hasLedger, loadDemo]);
+  }, [hasLedger, state, loadDemo]);
 
   useEffect(() => {
     if (lockedEnvelope || bootRan.current) return;
