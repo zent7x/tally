@@ -6,11 +6,11 @@
 
 **Your money, on your machine.** Tally is a personal finance tracker with bank CSV imports, multiple accounts, budgets, and a plan for uneven income. No sign-up, bank login, backend, or analytics. Calculations and financial data stay in your browser.
 
-**[Open Tally](https://zent7x.com/tally/)** · **[What's new in v0.3.0](CHANGELOG.md)**
+**[Open Tally](https://zent7x.com/tally/)** · **[What's new in v0.3.1](CHANGELOG.md)**
 
 ## Get started
 
-1. Choose **Open your ledger**, or **Explore a demo** to try example data.
+1. Choose **Open your ledger**, or **Try the demo** to try example data.
 2. In **Accounts**, add your accounts and current balances.
 3. Choose **Import CSV**, select the destination account, and review the column mapping and preview before importing. You can also **Add transaction** manually.
 4. Explore **Overview**, **Transactions**, **Categories**, **Recurring**, and **Budgets**. Use **Income plan** and **Forecast** to look ahead.
@@ -25,7 +25,7 @@ Data belongs to this browser profile and website address. Clearing site data rem
 - **Income smoothing.** Choose 3, 6, or 12 completed calendar months and an average, conservative (25th percentile), or manual planning income. Missing months after the ledger begins count as zero; the incomplete current month and transfers are excluded. Set a desired monthly draw and earmarked reserve to see an illustrative cushion and reserve gap. Earmarked cash is already part of your accounts and never increases their balances.
 - **Twelve-month cash scenarios.** Forecast uses liquid cash from checking, savings, and cash accounts, your saved income estimate, and average recorded spending. Try a monthly income adjustment or reduce Dining, Shopping, and Entertainment spending without changing your saved plan. Investments and debts are outside the starting liquid balance. Unrecorded expenses, investment returns, and future debt payments are not added automatically; this is a planning scenario, not a prediction.
 - **Everyday tracking.** Add, edit, categorize, search, and filter transactions; save categorization rules; set category budgets; review recurring charges; export categorized transactions with account names as CSV.
-- **A usable frontend.** Responsive navigation and forms, light and dark themes, keyboard-accessible dialogs, clear empty states, import previews, save feedback, and functional landing-page links.
+- **A compact frontend.** Clear section navigation, a continuous balance summary, transaction and account lists, light/dark themes, and keyboard-accessible forms. The landing page includes a working 3D calculator; its calculations are temporary and never alter the ledger. The visual redesign follows [Uncodixfy](https://github.com/cyxzdev/Uncodixfy).
 
 ## Privacy, protection, and backups
 

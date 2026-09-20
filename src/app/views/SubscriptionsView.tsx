@@ -29,7 +29,7 @@ function RecurringSection({
   const monthlyTotal = items.reduce((sum, item) => sum + item.monthly, 0);
 
   return (
-    <section className="glass-panel p-5 sm:p-6">
+    <section className="panel p-5 sm:p-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h2 className="text-sm font-medium" style={{ color: "var(--muted)" }}>
@@ -105,7 +105,7 @@ export function SubscriptionsView() {
 
   return (
     <div className="space-y-6">
-      <div className="glass-panel p-5">
+      <div className="panel p-5">
         <p className="text-sm font-medium" style={{ color: "var(--muted)" }}>
           Recurring outflows
         </p>

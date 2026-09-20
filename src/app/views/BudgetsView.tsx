@@ -54,7 +54,7 @@ export function BudgetsView() {
 
   return (
     <div className="space-y-6">
-      <div className="glass-panel p-5">
+      <div className="panel p-5">
         <p className="text-sm font-medium" style={{ color: "var(--muted)" }}>
           Monthly budgets
         </p>
@@ -66,7 +66,7 @@ export function BudgetsView() {
         </p>
       </div>
 
-      <section className="glass-panel p-5 sm:p-6">
+      <section className="panel p-5 sm:p-6">
         <ul className="space-y-5">
           {rows.map((row) => (
             <li key={row.name}>

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ArrowDownToLine, CirclePlus, LockKeyhole, ShieldCheck } from "lucide-react";
+import { ArrowDownToLine, CirclePlus, LockKeyhole, ShieldCheck, LayoutDashboard, List, Landmark, SlidersHorizontal, ChartNoAxesCombined, Tags, Repeat, ChartPie, Database } from "lucide-react";
 import { PageBackground } from "@/components/PageBackground";
 import { SiteHeader } from "@/components/SiteHeader";
 import { EmptyState } from "@/app/components/EmptyState";
@@ -20,17 +20,17 @@ import { DataView } from "@/app/views/DataView";
 import type { AppTab, DeepLinkAction } from "@/lib/finance/types";
 import { defaultState } from "@/lib/finance/storage";
 
-const TABS: { id: AppTab; label: string; description: string }[] = [
-  { id: "overview", label: "Overview", description: "A little clarity for your everyday money." },
-  { id: "transactions", label: "Transactions", description: "Every little detail, all in one place." },
-  { id: "accounts", label: "Accounts", description: "The whole picture. Assets, debts, and what’s yours." },
-  { id: "income", label: "Income plan", description: "Uneven income. A steadier month." },
-  { id: "forecast", label: "Forecast", description: "Look ahead, with room to change the plan." },
-  { id: "categories", label: "Categories", description: "See where your money finds its way." },
-  { id: "subscriptions", label: "Recurring", description: "Small payments can add up to a big picture." },
-  { id: "budgets", label: "Budgets", description: "Make a little room for what matters." },
-  { id: "data", label: "Data & privacy", description: "Your ledger is yours to keep, move, and protect." },
-];
+const TABS = [
+  { id: "overview", label: "Overview", icon: LayoutDashboard },
+  { id: "transactions", label: "Transactions", icon: List },
+  { id: "accounts", label: "Accounts", icon: Landmark },
+  { id: "income", label: "Income plan", icon: SlidersHorizontal },
+  { id: "forecast", label: "Forecast", icon: ChartNoAxesCombined },
+  { id: "categories", label: "Categories", icon: Tags },
+  { id: "subscriptions", label: "Recurring", icon: Repeat },
+  { id: "budgets", label: "Budgets", icon: ChartPie },
+  { id: "data", label: "Data & privacy", icon: Database },
+] as const;
 
 function bootAction(): DeepLinkAction | null {
   try {
@@ -80,21 +80,22 @@ function FinanceAppInner() {
   return <PageBackground>
     <a href="#ledger-main" className="skip-link">Skip to ledger</a>
     <SiteHeader theme={theme} onToggleTheme={toggleTheme} variant="app" />
-    <div className="app-frame">
+    <div className="app-layout">
+      <nav className="app-tabs" aria-label="App sections">
+        {TABS.map(({ id, label, icon: Icon }) => <button key={id} type="button" aria-current={tab === id ? "page" : undefined}
+          className={`app-tab${tab === id ? " is-active" : ""}`} onClick={() => { setTab(id); setNotice(""); }}>
+          <Icon size={18} aria-hidden="true" />{label}
+        </button>)}
+      </nav>
+      <div className="app-frame">
       <div className="workspace-heading">
-        <div><p className="eyebrow">YOUR PRIVATE LEDGER</p><h1>{active.label}</h1><p>{active.description}</p></div>
+        <div><h1>{active.label}</h1><p>{state.settings.currency} · {state.transactions.length} transactions</p></div>
         <div className="ledger-actions">
           {encrypted && <button type="button" className="btn sec" onClick={() => { void lock().catch(() => {}); }} disabled={saving}><LockKeyhole size={16} />Lock</button>}
           <button type="button" className="btn sec" onClick={() => setModal("import")}><ArrowDownToLine size={16} />Import CSV</button>
           <button type="button" className="btn" onClick={() => setModal("add")}><CirclePlus size={16} />Add transaction</button>
         </div>
       </div>
-      <nav className="app-tabs" aria-label="App sections">
-        {TABS.map((item) => <button key={item.id} type="button" aria-current={tab === item.id ? "page" : undefined}
-          className={`app-tab${tab === item.id ? " is-active" : ""}`} onClick={() => { setTab(item.id); setNotice(""); }}>
-          {item.label}
-        </button>)}
-      </nav>
       {storageError && <div className="notice notice-error" role="alert">{storageError}</div>}
       {notice && <div className="notice" role="status">{notice}<button type="button" className="ghost" aria-label="Dismiss notification" onClick={() => setNotice("")}>×</button></div>}
       <main id="ledger-main" className="app-main" tabIndex={-1}>
@@ -109,6 +110,7 @@ function FinanceAppInner() {
         {tab === "data" && <DataView />}
       </main>
       <footer className="ledger-footer"><span><ShieldCheck size={14} />{encrypted ? "Encrypted on this device" : "Stored only on this device"}</span><span role="status">{saving ? "Saving…" : storageError ? "Save needs attention" : "All changes saved locally"}</span></footer>
+      </div>
     </div>
     {modal === "import" && <ImportDialog onClose={() => setModal(null)} onImported={(count: number) => {
       setModal(null); setTab("transactions"); setNotice(`${count} transaction${count === 1 ? "" : "s"} imported.`);

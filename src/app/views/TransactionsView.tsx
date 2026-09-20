@@ -50,7 +50,7 @@ export function TransactionsView() {
     } catch { setNotice("The CSV could not be downloaded. Please try again."); }
   }
 
-  if (!state.transactions.length) return <section className="glass-panel p-8 sm:p-12 text-center">
+  if (!state.transactions.length) return <section className="panel p-8 sm:p-12 text-center">
     <FileSearch size={32} aria-hidden="true" className="mx-auto mb-4 muted" />
     <h2 className="text-xl font-semibold">Your ledger starts here</h2>
     <p className="muted mt-2">Import a bank CSV or use Add transaction above to record your first expense or income.</p>
@@ -59,7 +59,7 @@ export function TransactionsView() {
 
   return <div className="space-y-4">
     {notice && <div className="notice" role="status">{notice}<button type="button" className="ghost" aria-label="Dismiss transaction notification" onClick={() => setNotice("")}>×</button></div>}
-    <div className="glass-panel p-4 sm:p-5">
+    <div className="panel p-4 sm:p-5">
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr]">
         <label className="ledger-field">Search descriptions
           <input type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Find a transaction…" className="ledger-input" />
@@ -87,7 +87,7 @@ export function TransactionsView() {
         </div>
       </div>
     </div>
-    {rows.length ? <div className="glass-panel overflow-x-auto" role="region" aria-label="Transactions table, scroll horizontally for more columns" tabIndex={0}>
+    {rows.length ? <div className="panel overflow-x-auto" role="region" aria-label="Transactions table, scroll horizontally for more columns" tabIndex={0}>
       <table className="w-full min-w-[780px] border-collapse text-sm">
         <caption className="sr-only">Transactions, sorted newest first. Negative amounts are expenses; positive amounts are income.</caption>
         <thead><tr style={{ background: "var(--wash)" }}>
@@ -107,7 +107,7 @@ export function TransactionsView() {
           </div></td>
         </tr>)}</tbody>
       </table>
-    </div> : <section className="glass-panel p-8 text-center">
+    </div> : <section className="panel p-8 text-center">
       <h2 className="font-semibold">No transactions match these filters</h2>
       <p className="muted mt-2">Try a different description, category, or account.</p>
       <button type="button" className="btn sec mt-4" onClick={clearFilters}>Show all transactions</button>

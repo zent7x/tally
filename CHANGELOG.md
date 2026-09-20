@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.3.1 — 2026-09-20
+
+- Redesigned the frontend using Uncodixfy: compact navigation, neutral surfaces, consistent sans-serif typography, simpler controls, and descriptive section labels.
+- Reorganized Overview around real balances, two daily charts, recent transactions, and account balances; removed the duplicate chart presentation.
+- Added a functional CSS 3D calculator with keyboard input and an optional front view. It uses no remote assets and never changes financial records.
+- Replaced animated headers, footer, and FAQ panels with straightforward accessible elements.
+- Verified all ledger workflows, calculator behavior, light/dark themes, and 320px/390px layouts with 22 browser tests.
+
 ## v0.3.0 — 2026-09-20
 
 ### Added

@@ -1,89 +1,37 @@
 import { useMemo } from "react";
-import { FinanceMetricsChart } from "@/components/FinanceMetricsChart";
-import { ProgressMetricCard } from "@/components/ui/progress-metric-card";
-import {
-  buildDailyFinanceData,
-  buildFinanceMetricSummaries,
-  buildIncomeSeries,
-  buildSpendSeries,
-  formatAxisDate,
-  netBalance,
-} from "@/lib/finance/metrics";
-import { accountSummary } from "@/lib/finance/accounts";
 import { useFinance } from "@/app/hooks/useFinanceStore";
-
-function formatMoney(value: number, currency = "USD") {
-  return new Intl.NumberFormat(undefined, {
-    style: "currency",
-    currency,
-    maximumFractionDigits: 0,
-  }).format(value);
-}
+import { ProgressMetricCard } from "@/components/ui/progress-metric-card";
+import { accountBalance, accountSummary } from "@/lib/finance/accounts";
+import { buildDailyFinanceData, buildFinanceMetricSummaries, buildSpendSeries, buildIncomeSeries, formatAxisDate } from "@/lib/finance/metrics";
 
 export function OverviewView() {
   const { state } = useFinance();
   const { transactions, settings } = state;
-
-  const daily = useMemo(() => buildDailyFinanceData(transactions), [transactions]);
-  const chartData = useMemo(() => daily.slice(-30), [daily]);
-  const metrics = useMemo(() => buildFinanceMetricSummaries(daily, settings.currency), [daily, settings.currency]);
-  const spendSeries = useMemo(() => buildSpendSeries(transactions), [transactions]);
-  const incomeSeries = useMemo(() => buildIncomeSeries(transactions), [transactions]);
-  const balance = useMemo(() => netBalance(state), [state]);
-
   const summary = useMemo(() => accountSummary(state), [state]);
-
-  return (
-    <div className="space-y-5">
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <div className="glass-panel anim-1 flex flex-col justify-center p-6 sm:col-span-2 lg:col-span-1">
-          <p className="text-sm font-medium" style={{ color: "var(--muted)" }}>
-            Liquid cash
-          </p>
-          <p
-            className="mt-2 text-4xl font-semibold tracking-tight tabular-nums"
-            style={{ color: "var(--ink)" }}
-          >
-            {formatMoney(balance, settings.currency)}
-          </p>
-          <div className="mt-5 border-t pt-4" style={{ borderColor: "var(--border)" }}>
-            <p className="text-sm" style={{ color: "var(--muted)" }}>Net worth</p>
-            <p className="mt-1 text-2xl font-semibold tabular-nums">{formatMoney(summary.netWorth, settings.currency)}</p>
-            <p className="mt-2 text-xs" style={{ color: "var(--muted)" }}>Assets minus debts across {state.accounts.length} {state.accounts.length === 1 ? "account" : "accounts"}.</p>
-          </div>
-        </div>
-        <ProgressMetricCard
-          title="Daily spend"
-          periods={[{ label: "7D", points: 7 }, { label: "14D", points: 14 }, { label: "30D", points: 30 }, { label: "45D", points: 45 }]}
-          defaultPeriod="30D"
-          data={spendSeries}
-          accent="rose"
-          valueFormatter={(v) => formatMoney(v, settings.currency)}
-          dateFormatter={formatAxisDate}
-          className="anim-2 sm:col-span-1"
-        />
-        <ProgressMetricCard
-          title="Daily income"
-          periods={[{ label: "7D", points: 7 }, { label: "14D", points: 14 }, { label: "30D", points: 30 }, { label: "45D", points: 45 }]}
-          defaultPeriod="30D"
-          data={incomeSeries}
-          accent="emerald"
-          valueFormatter={(v) => formatMoney(v, settings.currency)}
-          dateFormatter={formatAxisDate}
-          className="anim-2 sm:col-span-1"
-        />
-      </div>
-
-      <section className="anim-3 space-y-3" aria-labelledby="cash-flow-title">
-        <div>
-          <h3 id="cash-flow-title" className="text-lg font-semibold">Your last 30 days</h3>
-          <p className="mt-1 text-sm" style={{ color: "var(--muted)" }}>
-            {formatAxisDate(chartData[0]!.date)} – {formatAxisDate(chartData[chartData.length - 1]!.date)} · Compared with the previous 30 days. Transfers are excluded from cash flow.
-          </p>
-          {!transactions.length && <p className="mt-2 text-sm" style={{ color: "var(--muted)" }}>Add or import transactions to see your activity here.</p>}
-        </div>
-        <FinanceMetricsChart data={chartData} metrics={metrics} currency={settings.currency} />
-      </section>
+  const daily = useMemo(() => buildDailyFinanceData(transactions), [transactions]);
+  const metrics = useMemo(() => buildFinanceMetricSummaries(daily, settings.currency), [daily, settings.currency]);
+  const spend = useMemo(() => buildSpendSeries(transactions), [transactions]);
+  const income = useMemo(() => buildIncomeSeries(transactions), [transactions]);
+  const recent = useMemo(() => [...transactions].sort((a,b) => b.date.localeCompare(a.date)).slice(0,5), [transactions]);
+  const money = (value: number) => new Intl.NumberFormat(undefined, { style: "currency", currency: settings.currency, maximumFractionDigits: 2 }).format(value);
+  const periods = [{ label: "7D", points: 7 }, { label: "14D", points: 14 }, { label: "30D", points: 30 }, { label: "45D", points: 45 }];
+  return <div className="overview-content">
+    <dl className="balance-strip">
+      {[{ label: "Liquid cash", value: summary.cashBalance, detail: "Checking, savings and cash" },
+        { label: "Net worth", value: summary.netWorth, detail: `${state.accounts.length} accounts · assets less debts` },
+        { label: "Income", value: metrics.find(metric => metric.key === "income")!.value, detail: "Last 30 days" },
+        { label: "Spending", value: metrics.find(metric => metric.key === "spend")!.value, detail: "Last 30 days" }].map(item => <div key={item.label}><dt>{item.label}</dt><dd>{money(item.value)}</dd><p>{item.detail}</p></div>)}
+    </dl>
+    <div className="overview-charts">
+      <ProgressMetricCard title="Daily spend" periods={periods} defaultPeriod="30D" data={spend} accent="rose" valueFormatter={money} dateFormatter={formatAxisDate} />
+      <ProgressMetricCard title="Daily income" periods={periods} defaultPeriod="30D" data={income} accent="emerald" valueFormatter={money} dateFormatter={formatAxisDate} />
     </div>
-  );
+    <div className="overview-details">
+      <section className="recent-section" aria-labelledby="recent-title"><div className="section-heading"><h2 id="recent-title">Recent transactions</h2><span className="muted">Latest {recent.length}</span></div>
+        <div className="table-scroll"><table className="recent-table"><thead><tr><th scope="col">Description</th><th scope="col">Date</th><th scope="col">Amount</th></tr></thead><tbody>{recent.map(transaction => <tr key={transaction.id}><td><strong>{transaction.desc}</strong><span>{transaction.category}</span></td><td>{formatAxisDate(transaction.date)}</td><td>{transaction.amount > 0 ? "+" : ""}{money(transaction.amount)}</td></tr>)}</tbody></table></div>
+        {!recent.length && <p className="muted">Add or import a transaction to start your ledger.</p>}
+      </section>
+      <section className="overview-accounts" aria-labelledby="overview-accounts-title"><div className="section-heading"><h2 id="overview-accounts-title">Account balances</h2><span className="muted">{settings.currency}</span></div><ul>{state.accounts.map(account => <li key={account.id}><div><strong>{account.name}</strong><span>{account.type === "credit" ? "Credit card" : account.type[0].toUpperCase()+account.type.slice(1)}</span></div><span>{money(accountBalance(state,account.id))}</span></li>)}</ul></section>
+    </div>
+  </div>;
 }
