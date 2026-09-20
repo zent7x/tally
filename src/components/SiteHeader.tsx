@@ -110,10 +110,10 @@ export function SiteHeader({ theme, onToggleTheme, variant }: SiteHeaderProps) {
             className="ghost icon"
             data-anime
             onClick={onToggleTheme}
-            title={isDark ? "Switch to white" : "Switch to black"}
-            aria-label={isDark ? "Switch to white" : "Switch to black"}
+            title={isDark ? "Switch to light mode" : "Switch to dark mode"}
+            aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
           >
-            {isDark ? <Moon size={16} strokeWidth={2} /> : <Sun size={16} strokeWidth={2} />}
+            {isDark ? <Sun size={16} strokeWidth={2} aria-hidden="true" /> : <Moon size={16} strokeWidth={2} aria-hidden="true" />}
           </button>
 
           {variant === "landing" ? (

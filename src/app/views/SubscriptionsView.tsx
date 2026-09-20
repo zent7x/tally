@@ -25,6 +25,7 @@ function RecurringSection({
   currency: string;
   empty: string;
 }) {
+  const { state } = useFinance();
   const monthlyTotal = items.reduce((sum, item) => sum + item.monthly, 0);
 
   return (
@@ -55,7 +56,7 @@ function RecurringSection({
                   {item.name}
                 </p>
                 <p className="mt-0.5 text-xs" style={{ color: "var(--muted)" }}>
-                  {item.category} · {item.cadence} · {item.count} charges · last {shortDate(item.last)}
+                  {item.category} · {state.accounts.find((account) => account.id === item.accountId)?.name ?? "Main account"} · {item.cadence} · {item.count} charges · last {shortDate(item.last)}
                 </p>
               </div>
               <div className="text-right">
@@ -112,7 +113,7 @@ export function SubscriptionsView() {
           {formatMoney(totalMonthly, settings.currency)}
         </p>
         <p className="mt-1 text-xs" style={{ color: "var(--muted)" }}>
-          Estimated monthly total from detected patterns
+          Estimated monthly total from detected patterns · {formatMoney(totalMonthly * 12, settings.currency)} per year if they continue
         </p>
       </div>
 

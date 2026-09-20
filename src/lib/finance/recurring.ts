@@ -1,20 +1,24 @@
 import { norm } from "./categories";
+import { DEFAULT_ACCOUNT_ID, isTransfer } from "./accounts";
 import type { RecurringItem, Transaction } from "./types";
 
 export function detectRecurring(
   transactions: Transaction[],
   sign: -1 | 1,
 ): RecurringItem[] {
-  const groups: Record<string, Transaction[]> = {};
+  const groups = new Map<string, Transaction[]>();
   for (const t of transactions) {
-    if (Math.sign(t.amount) !== sign) continue;
-    const k = norm(t.desc);
-    if (k.length < 3) continue;
-    (groups[k] ||= []).push(t);
+    if (Math.sign(t.amount) !== sign || isTransfer(t)) continue;
+    const merchant = norm(t.desc);
+    if (merchant.length < 3) continue;
+    const key = JSON.stringify([t.accountId ?? DEFAULT_ACCOUNT_ID, merchant]);
+    const group = groups.get(key) ?? [];
+    group.push(t);
+    groups.set(key, group);
   }
   const out: RecurringItem[] = [];
-  for (const k in groups) {
-    const g = groups[k].slice().sort((a, b) => (a.date < b.date ? -1 : 1));
+  for (const [k, group] of groups) {
+    const g = group.slice().sort((a, b) => a.date.localeCompare(b.date));
     if (g.length < 2) continue;
     const gaps: number[] = [];
     for (let i = 1; i < g.length; i++) {
@@ -56,6 +60,7 @@ export function detectRecurring(
       monthly: avg * perMonth,
       count: g.length,
       last: g[g.length - 1].date,
+      accountId: g[g.length - 1].accountId ?? DEFAULT_ACCOUNT_ID,
     });
   }
   return out.sort((a, b) => b.monthly - a.monthly);

@@ -35,11 +35,11 @@ export const ACCENTS: Record<
   MetricAccent,
   { stroke: string; text: string; fill: string }
 > = {
-  emerald: { stroke: "#146B4A", text: "#146B4A", fill: "#146B4A" },
-  rose: { stroke: "#BE123C", text: "#BE123C", fill: "#BE123C" },
-  neutral: { stroke: "#5B646C", text: "#5B646C", fill: "#5B646C" },
-  blue: { stroke: "#2563EB", text: "#2563EB", fill: "#2563EB" },
-  amber: { stroke: "#D97706", text: "#D97706", fill: "#D97706" },
+  emerald: { stroke: "var(--chart-emerald, #146b4a)", text: "var(--chart-emerald, #146b4a)", fill: "var(--chart-emerald, #146b4a)" },
+  rose: { stroke: "var(--chart-rose, #be123c)", text: "var(--chart-rose, #be123c)", fill: "var(--chart-rose, #be123c)" },
+  neutral: { stroke: "var(--chart-neutral, #5b646c)", text: "var(--chart-neutral, #5b646c)", fill: "var(--chart-neutral, #5b646c)" },
+  blue: { stroke: "var(--chart-blue, #2563eb)", text: "var(--chart-blue, #2563eb)", fill: "var(--chart-blue, #2563eb)" },
+  amber: { stroke: "var(--chart-amber, #a55a05)", text: "var(--chart-amber, #a55a05)", fill: "var(--chart-amber, #a55a05)" },
 };
 
 export const SERIES_COLORS = [
@@ -70,6 +70,7 @@ type ChartRow = SeriesPoint & { index: number };
 
 export type MetricChartProps = {
   data: MetricSeries;
+  label?: string;
   view?: ChartView;
   accent?: MetricAccent;
   activeIndex?: number;
@@ -134,6 +135,7 @@ function ChartTooltip({
 
 export function MetricChart({
   data,
+  label = "Daily values",
   view = "curve",
   accent = "emerald",
   activeIndex: activeIndexProp,
@@ -171,6 +173,8 @@ export function MetricChart({
 
   const sharedProps = {
     data: chartData,
+    accessibilityLayer: true,
+    "aria-label": `${label}. Use the left and right arrow keys to explore values.`,
     margin: { top: 8, right: 4, left: 4, bottom: 0 },
     onMouseMove: handleMouseMove,
     onMouseLeave: handleMouseLeave,
@@ -183,7 +187,7 @@ export function MetricChart({
     strokeWidth: 2,
   };
 
-  const cursorFill = `${colors.fill}18`;
+  const cursorFill = `color-mix(in srgb, ${colors.fill} 10%, transparent)`;
 
   return (
     <div className={cn("w-full", className)} style={{ height, minHeight: height }}>
@@ -210,6 +214,7 @@ export function MetricChart({
             />
             <Bar
               dataKey="value"
+              isAnimationActive={false}
               radius={[4, 4, 0, 0]}
               fill={colors.stroke}
               fillOpacity={0.88}
@@ -245,6 +250,7 @@ export function MetricChart({
             <Area
               type="monotone"
               dataKey="value"
+              isAnimationActive={false}
               stroke={colors.stroke}
               strokeWidth={2.5}
               strokeOpacity={1}

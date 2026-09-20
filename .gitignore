@@ -10,3 +10,7 @@ tally-backup-*.json
 # design exploration dumps (not used by the app)
 /assets/
 src/assets/bg/ledger-wave-raw.png
+
+# Browser test artifacts
+playwright-report/
+test-results/

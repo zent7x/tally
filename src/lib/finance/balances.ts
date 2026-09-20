@@ -1,4 +1,5 @@
 import type { AppState, Transaction } from "./types";
+import { accountSummary, isTransfer } from "./accounts";
 
 export const ym = (d: string): string => d.slice(0, 7);
 
@@ -25,6 +26,7 @@ export function net(transactions: Transaction[]): number {
 }
 
 export function currentBalance(state: AppState): number {
+  if (state.accounts?.length) return accountSummary(state).cashBalance;
   return state.settings.startingBalance != null
     ? state.settings.startingBalance
     : net(state.transactions);
@@ -39,7 +41,7 @@ export function monthSpend(
   key: string,
 ): number {
   return -sum(
-    txForMonth(transactions, key).filter((t) => t.amount < 0),
+    txForMonth(transactions, key).filter((t) => t.amount < 0 && !isTransfer(t)),
     (t) => t.amount,
   );
 }
@@ -49,7 +51,7 @@ export function monthIncome(
   key: string,
 ): number {
   return sum(
-    txForMonth(transactions, key).filter((t) => t.amount > 0),
+    txForMonth(transactions, key).filter((t) => t.amount > 0 && !isTransfer(t)),
     (t) => t.amount,
   );
 }

@@ -13,7 +13,18 @@ const base = process.env.VITE_BASE || "./";
 export default defineConfig({
   root,
   base,
-  plugins: [react(), tailwindcss()],
+  plugins: [
+    react(),
+    tailwindcss(),
+    {
+      name: "tally-local-only",
+      apply: "build",
+      transformIndexHtml(html) {
+        const policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'";
+        return html.replace('<meta charset="UTF-8" />', `<meta charset="UTF-8" />\n    <meta http-equiv="Content-Security-Policy" content="${policy}" />`);
+      },
+    },
+  ],
   resolve: {
     alias: {
       "@": srcDir,
@@ -24,6 +35,11 @@ export default defineConfig({
     emptyOutDir: true,
     assetsDir: "assets",
     rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (/\/node_modules\/(recharts|recharts-scale|d3-[^/]+|victory-vendor|react-smooth)\//.test(id)) return "charts";
+        },
+      },
       input: {
         main: path.join(root, "index.html"),
         app: path.join(root, "app.html"),
