@@ -39,6 +39,8 @@ Save errors stay visible. If another tab changes the ledger, the stale tab stops
 
 ## Develop and verify
 
+Use Node.js 24 LTS with its bundled npm; CI and deployment use the same runtime.
+
 ```bash
 npm ci
 npm run dev                  # http://localhost:5173
